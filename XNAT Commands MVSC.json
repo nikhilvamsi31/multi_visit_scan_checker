@@ -1,0 +1,84 @@
+{
+    "name": "mvsc",
+    "label": "Multiple Visit Scan Checker",
+    "description": "Compare scans from subjects with multiple visits",
+    "version": "1.0",
+    "schema-version": "1.0",
+	"image": "mvsccnda",
+	"type": "docker", 
+	"command-line": "python multi-visit-scan-checker-cnda #project# #subject# #xsitype# #match# #compareAll# --output /out --username $XNAT_USER --password $XNAT_PASS --host $XNAT_HOST ",
+	"mounts": [
+	    {
+	        "name": "mvsc-output",
+	        "writable": true,
+            "path": "/out"
+        }
+    ],
+    "inputs": [
+        {
+            "name": "project",
+            "description": "Project to get session data from",
+            "type": "string",
+            "required": true,
+            "command-line-flag": "--project"
+        },
+        {
+            "name": "subject",
+            "description": "Subject to get session data from",
+            "type": "string",
+            "required": true,
+            "command-line-flag": "--subject"
+        },
+        {
+            "name": "xsitype",
+            "description": "Type of scans to be compared",
+            "type": "string",
+            "required": true,
+            "command-line-flag": "--xsitype"
+        },
+        {
+            "name": "match",
+            "description": "The type of scan to compare",
+            "type": "string",
+            "required": true,
+            "command-line-flag": "--match"
+        },
+        {
+            "name": "compareAll",
+            "description": "To compare all scans or not",
+            "type": "boolean",
+            "required": false,
+            "default-value": false,
+            "command-line-flag": "--compareAll",
+            "true-value": "True",
+            "false-value": "False"
+        }
+        
+    ],
+    "xnat": [
+    {
+            "name": "Scan Similarity Checker",
+            "description": "Check to see if scans are of the same subject",
+            "contexts": ["xnat:subjectData"],
+            "external-inputs": [
+                {
+                    "name": "subj",
+                    "description": "The subject to check",
+                    "type": "Subject",
+                    "user-settable": true
+                }
+            ],
+            "derived-inputs": [
+                {
+                    "name": "proj",
+                    "description": "Project of subject",
+                    "type": "string",
+                    "user-settable": false,
+                    "provides-value-for-command-input": "project",
+                    "derived-from-xnat-input": "subj",
+                    "derived-from-xnat-object-property": "project-id"
+                }
+            ]
+        }
+    ]
+}
